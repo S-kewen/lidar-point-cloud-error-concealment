@@ -1,0 +1,260 @@
+# check path, source_mac, receive_mac
+exp:
+  cudnn: True
+  path: /mnt/data2/skewen/kittiGenerator/output/20230413_False_1_6_110_0_600_10/object/CAR5
+  train_path: /mnt/data2/skewen/kittiGenerator/output/20230203_20_1_50_0_10000/object/training
+  sector_size: &sector_size 180
+  point_count: &point_count -1
+  packet_loss_rates: &packet_loss_rates ["ns3_nr_c_v2x_5"]
+  lidar_range: &lidar_range 120
+  lidar_coordinate: &lidar_coordinate [0, 0, 0]
+  azimuth_size: &azimuth_size 2000
+  channel_size: &channel_size 64
+  v_fov: &v_fov 26.8
+  v_fov_start: &v_fov_start -16.8
+  v_fov_end: &v_fov_end 10.0
+  h_fov: &h_fov 360.0
+  h_fov_start: &h_fov_start 0.0
+  h_fov_end: &h_fov_end 360.0
+  angular_resolution: &angular_resolution 0.18
+
+  pre_process: # Use to generate incomplete point cloud
+    process:
+      generation:
+        enable: True
+        sector_size: *sector_size
+        packet_loss_rates: *packet_loss_rates
+        ge_model_flag: True
+        source_mac: 4 #!!!!
+        receive_mac: 5 #!!!!
+        save_dir: cache_frame/receiver_none_{}
+      ground_removal:
+        enable: False
+        voxel_size: 0.1
+        ransac_n: 3
+        distance_threshold: 0.1
+        num_iterations: 1000
+        save_dir: velodyne_ground_removal
+      compression:
+        enable: False
+        save_dir: velodyne_compression
+
+
+  temporal_extrapolation:
+    process:
+      location_stiching:
+        enable: True
+        recursion: True
+        point_count: *point_count
+        sector_size: *sector_size
+      mc_stiching:
+        enable: True
+        recursion: True
+        point_count: *point_count
+        sector_size: *sector_size
+      closest_spatial:
+        enable: False
+        recursion: True
+        point_count: *point_count
+        sector_size: *sector_size
+        align_location: True
+        align_rotation: True
+        # max_frame_gap: 10
+        max_sector_gap: 20
+        lidar_range: *lidar_range
+        v_fov: *v_fov # angle of view
+        interval: 6
+        is_exp_interval: False
+    thread:
+      # doing multi-thread stitching
+    single:
+      # doing single stitching
+      # closest_spatial:
+      #   enable: True
+      #   recursion: True
+      #   point_count: *point_count
+      #   sector_size: *sector_size
+      #   align_location: True
+      #   align_rotation: True
+      #   # max_frame_gap: 10
+      #   max_sector_gap: 20
+      #   lidar_range: *lidar_range
+      #   v_fov: *v_fov # angle of view
+      #   interval: 6
+      #   is_exp_interval: False
+      # closest_both:
+      #   enable: False
+      #   recursion: True
+      #   point_count: *point_count
+      #   sector_size: *sector_size
+      #   align_location: True
+      #   align_rotation: True
+      #   # max_frame_gap: 10
+      #   max_sector_gap: 20
+      #   lidar_range: *lidar_range
+      #   v_fov: *v_fov # angle of view
+      #   weight: 0.7
+      #   interval: 3
+      #   is_exp_weight: False
+
+  spatial_interpolation:
+    process:
+      2d_nearest_neighbor:
+        enable: True
+        point_count: *point_count
+        lidar_range: *lidar_range
+        lidar_coordinate: *lidar_coordinate
+        azimuth_size: *azimuth_size
+        channel_size: *channel_size
+        v_fov: *v_fov
+        v_fov_start: *v_fov_start
+        v_fov_end: *v_fov_end
+        h_fov: *h_fov
+        h_fov_start: *h_fov_start
+        h_fov_end: *h_fov_end
+        angular_resolution: *angular_resolution
+      least_square:
+        enable: True
+        point_count: *point_count
+        lidar_range: *lidar_range
+        lidar_coordinate: *lidar_coordinate
+        azimuth_size: *azimuth_size
+        channel_size: *channel_size
+        v_fov: *v_fov
+        v_fov_start: *v_fov_start
+        v_fov_end: *v_fov_end
+        h_fov: *h_fov
+        h_fov_start: *h_fov_start
+        h_fov_end: *h_fov_end
+        angular_resolution: *angular_resolution
+      # ridge_regression:
+      #   enable: False
+      #   point_count: *point_count
+      #   lidar_range: *lidar_range
+      #   lidar_coordinate: *lidar_coordinate
+      #   azimuth_size: *azimuth_size
+      #   channel_size: *channel_size
+      #   v_fov: *v_fov
+      #   v_fov_start: *v_fov_start
+      #   v_fov_end: *v_fov_end
+      #   h_fov: *h_fov
+      #   h_fov_start: *h_fov_start
+      #   h_fov_end: *h_fov_end
+      #   angular_resolution: *angular_resolution
+      # maximum_likelihood:
+      #   enable: False
+      #   lidar_range: *lidar_range
+      #   lidar_coordinate: *lidar_coordinate
+      #   azimuth_size: *azimuth_size
+      #   channel_size: *channel_size
+      #   v_fov: *v_fov
+      #   v_fov_start: *v_fov_start
+      #   v_fov_end: *v_fov_end
+      #   h_fov: *h_fov
+      #   h_fov_start: *h_fov_start
+      #   h_fov_end: *h_fov_end
+      #   angular_resolution: *angular_resolution
+      # lasso:
+      #   enable: False
+      #   lidar_range: *lidar_range
+      #   lidar_coordinate: *lidar_coordinate
+      #   azimuth_size: *azimuth_size
+      #   channel_size: *channel_size
+      #   v_fov: *v_fov
+      #   v_fov_start: *v_fov_start
+      #   v_fov_end: *v_fov_end
+      #   h_fov: *h_fov
+      #   h_fov_start: *h_fov_start
+      #   h_fov_end: *h_fov_end
+      #   angular_resolution: *angular_resolution
+    thread:
+      # doing multi-thread stitching
+    single:
+      # doing single stitching
+
+  temporal_interpolation:
+    process:
+      # none:
+      #   enable: False
+      #   point_count: *point_count
+      #   sector_size: *sector_size
+      # identity:
+      #   enable: False
+      #   point_count: *point_count
+      #   sector_size: *sector_size
+      point2point:
+        enable: False
+        point_count: *point_count
+        sector_size: *sector_size
+        k: 1
+      # triangular:
+      #   enable: False
+      #   point_count: *point_count
+      #   sector_size: *sector_size
+      #   k: 3
+    thread:
+      # doing multi-thread interpolation
+    single:
+      align_icp:
+        enable: True
+        point_count: *point_count
+        sector_size: *sector_size
+        voxel_size: 0.75
+      scene_flow:
+        enable: False
+        point_count: *point_count
+        sector_size: *sector_size
+        step_t: 0.5
+        model_path: PointINet/pretrain_model/interp_kitti.pth
+        flow_model_path: PointINet/pretrain_model/flownet3d_kitti_odometry_maxbias1.pth
+        sampling_type: 1
+        remove_outlier: False
+      pointinet:
+        enable: False
+        point_count: *point_count
+        sector_size: *sector_size
+        step_t: 0.5
+        model_path: PointINet/pretrain_model/interp_kitti.pth
+        flow_model_path: PointINet/pretrain_model/flownet3d_kitti_odometry_maxbias1.pth
+        sampling_type: 1
+        remove_outlier: False
+
+  lidar_error_concealment:
+    enable: True
+    recursion: True
+    point_count: *point_count
+    sector_size: *sector_size
+    threadhold_tp_list: [0.2, 0.4, 0.6, 0.8, 1.0]
+    threadhold_tn_list: [0.2, 0.3, 0.4, 0.5, 0.6]
+    lidar_range: *lidar_range
+    lidar_coordinate: *lidar_coordinate
+    azimuth_size: *azimuth_size
+    channel_size: *channel_size
+    v_fov: *v_fov
+    v_fov_start: *v_fov_start
+    v_fov_end: *v_fov_end
+    h_fov: *h_fov
+    h_fov_start: *h_fov_start
+    h_fov_end: *h_fov_end
+    angular_resolution: *angular_resolution
+    step_t: 0.5
+    model_path: PointINet/pretrain_model/interp_kitti.pth
+    flow_model_path: PointINet/pretrain_model/flownet3d_kitti_odometry_maxbias1.pth
+    sampling_type: 1
+    remove_outlier: False
+
+  completion:
+    enable: True
+    fbnet:
+      enable: True
+
+  evaluation:
+    gt_dir: velodyne_compression
+    sector_size: *sector_size
+    snn_rmse: False
+    running_time: True
+    acd: False
+    cd: True
+    cd_psnr: False
+    hd: True
+    emd: False
