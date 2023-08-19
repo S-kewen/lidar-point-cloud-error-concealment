@@ -1,0 +1,79 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+rss/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+*.ply
+*.pcap
+*.jpg
+*.npy
+*.bin
+*.png
+*.jpg
+*.csv
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### PointRCNN ###
+*__pycache__*
+*_ext*
+PointRCNN/output
+*.cu.o
+PointRCNN/data
+**/build
+**/*.egg-info
+**/dist
+PointRCNN/tools/gt_database/
+
+### PointNet2 ###
+PointRCNN/pointnet2/build/
+PointRCNN/pointnet2/dist/
+PointRCNN/pointnet2/pointnet2.egg-info/
+PointRCNN/pointnet2_lib/tools/output
+PointRCNN/pointnet2_lib_fg/tools/output
+Pointnet2_PyTorch
+
+### Kaolin ###
+kaolin/*
+
+### PyTorchEMD ###
+PyTorchEMD/*
+
+### ShapeMeasure ###
+ShapeMeasure/*
+
+
+### csv ###
+*cvs_*/*
+*result_*/*
+output/
+
+### config ###
+*config_*/*
